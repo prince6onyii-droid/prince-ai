@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="app-container">
+        <!-- Welcome Screen -->
         <div id="welcome-screen" class="welcome-screen">
             <div class="welcome-content">
                 <div class="crown-icon">👑</div>
@@ -18,7 +19,9 @@
             </div>
         </div>
 
+        <!-- Main Chat Interface -->
         <div id="chat-interface" class="chat-interface hidden">
+            <!-- Top Bar -->
             <header class="top-bar">
                 <div class="ai-info">
                     <div class="ai-avatar">
@@ -36,6 +39,7 @@
                 </div>
             </header>
 
+            <!-- Chat Area -->
             <div class="chat-container" id="chat-container">
                 <div class="messages" id="messages">
                     <div class="message ai-message welcome-message">
@@ -57,6 +61,7 @@
                 </div>
             </div>
 
+            <!-- Input Area -->
             <div class="input-area">
                 <div class="input-wrapper">
                     <button class="mic-btn" id="mic-btn" title="Voice Input">🎤</button>
