@@ -1,8 +1,8 @@
 // ============================================
 // PRINCE AI - FRONTEND
-// UPDATE THIS WITH YOUR RENDER BACKEND URL
+// RENDER BACKEND: https://prince-ai-n5m0.onrender.com
 // ============================================
-const API_BASE = 'https://your-prince-ai.onrender.com'; // ← CHANGE THIS
+const API_BASE = 'https://prince-ai-n5m0.onrender.com';
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -46,7 +46,6 @@ function addMessage(role, content) {
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   
-  // Format content
   const formatted = formatContent(content);
   bubble.innerHTML = formatted;
   
@@ -62,26 +61,23 @@ function addMessage(role, content) {
   scrollToBottom();
 }
 
+
+
+
+
+
+
+
 function formatContent(text) {
-  // Escape HTML first
   let safe = text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
   
-  // Format code blocks
   safe = safe.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-  
-  // Format inline code
   safe = safe.replace(/`([^`]+)`/g, '<code>$1</code>');
-  
-  // Format bold
   safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  
-  // Format italic
   safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  
-  // Format newlines
   safe = safe.replace(/\n/g, '<br>');
   
   return safe;
@@ -102,6 +98,9 @@ function scrollToBottom() {
     behavior: 'smooth'
   });
 }
+
+
+
 // ============================================
 // API COMMUNICATION
 // ============================================
@@ -109,17 +108,12 @@ async function sendMessage() {
   const text = userInput.value.trim();
   if (!text || isLoading) return;
 
-  // Clear input
   userInput.value = '';
   sendBtn.disabled = true;
 
-  // Add user message
   addMessage('user', text);
-  
-  // Add to history
   chatHistory.push({ role: 'user', content: text });
 
-  // Show typing
   showTyping();
   isLoading = true;
 
@@ -142,7 +136,6 @@ async function sendMessage() {
 
     const data = await response.json();
     
-    // Add AI response
     addMessage('ai', data.reply);
     chatHistory.push({ role: 'assistant', content: data.reply });
 
@@ -162,6 +155,7 @@ function showTyping() {
 function hideTyping() {
   typingIndicator.classList.add('hidden');
 }
+
 
 // ============================================
 // EVENT LISTENERS
@@ -263,3 +257,4 @@ function stopRecording() {
 // Initialize
 sendBtn.disabled = true;
 console.log('👑 Prince AI loaded. Royal service ready.');
+
