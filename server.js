@@ -1,53 +1,63 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const fetch = require('node-fetch');
-require('dotenv').config();
+const { OpenAI } = require('openai');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static('public'));
-
-app.get('/health', (req, res) => {
-    res.json({ status: 'ok', prince: 'online' });
+// Groq client
+const groq = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: 'https://api.groq.com/openai/v1'
 });
 
+// CORS - allow your frontend
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
+app.use(express.json());
+
+// Health check
+app.get('/', (req, res) => {
+  res.json({ status: 'Prince AI is ruling', version: '1.0.0' });
+});
+
+// Chat endpoint
 app.post('/api/chat', async (req, res) => {
-    try {
-        const { messages } = req.body;
-        
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: process.env.MODEL || 'llama3-8b-8192',
-                messages: messages,
-                max_tokens: 1024,
-                temperature: 0.7
-            })
-        });
+  try {
+    const { message, history = [] } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message required' });
 
-        const data = await response.json();
-        
-        if (!response.ok) {
-            return res.status(response.status).json({ 
-                error: data.error?.message || 'API error' 
-            });
-        }
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are Prince AI, a royal, sophisticated, and highly intelligent AI assistant. You speak with elegance, wisdom, and authority. You help users with coding, creativity, knowledge, and any task they need. Your tone is noble yet approachable. Always sign off with a royal touch.'
+      },
+      ...history,
+      { role: 'user', content: message }
+    ];
 
-        res.json({ reply: data.choices[0].message.content });
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 2048
+    });
 
-    } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ error: 'Royal connection disturbed' });
-    }
+    const reply = completion.choices[0].message.content;
+
+    res.json({ reply, model: completion.model });
+
+  } catch (error) {
+    console.error('Groq Error:', error.message);
+    res.status(500).json({ error: 'Royal decree failed', details: error.message });
+  }
 });
 
 app.listen(PORT, () => {
-    console.log(`Prince AI server running on port ${PORT}`);
+  console.log(`Prince AI ruling on port ${PORT}`);
 });
