@@ -27,7 +27,7 @@ app.use(express.json());
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ status: 'Prince AI is ruling', version: '1.0.0' });
+  res.json({ status: 'Vault-Edge AI is online', version: '1.1.0' });
 });
 
 // Chat endpoint
@@ -60,10 +60,10 @@ ${message}`
 
   } catch (error) {
     console.error('Groq Error:', error.message);
-    res.status(500).json({ error: 'Royal decree failed', details: error.message });
+    res.status(500).json({ error: 'Vault-Edge AI could not complete that reply. Please try again shortly.' });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Prince AI ruling on port ${PORT}`);
+  console.log(`Vault-Edge AI listening on port ${PORT}`);
 });
