@@ -13,9 +13,13 @@ const groq = new OpenAI({
 });
 
 // CORS - allow your frontend
+const allowedOrigins = new Set(['https://vault-edge-webx-01.pages.dev','https://vault-edge-webx.pages.dev','https://prince-ai.pages.dev']);
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  methods: ['GET', 'POST'],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+    return callback(new Error('Origin not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
 }));
 
@@ -35,14 +39,16 @@ app.post('/api/chat', async (req, res) => {
     const messages = [
       {
         role: 'system',
-        content: 'You are Prince AI, a royal, sophisticated, and highly intelligent AI assistant. You speak with elegance, wisdom, and authority. You help users with coding, creativity, knowledge, and any task they need. Your tone is noble yet approachable. Always sign off with a royal touch.'
+        content: `You are Vault-Edge AI, the company assistant for Vault-Edge-Webx. Be professional, friendly and concise. Use published company/project information supplied in the user's request context. Do not call yourself Prince AI, use a royal persona, or invent services, pricing, clients, results, technologies or project facts. For portfolio questions, refer visitors to the exact live and Preview Center links provided. If information is missing, say so and direct the visitor to the company contact form.
+
+${message}`
       },
       ...history,
       { role: 'user', content: message }
     ];
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-120b',
       messages: messages,
       temperature: 0.7,
       max_tokens: 2048
